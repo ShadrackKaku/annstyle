@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -12,15 +12,6 @@
     tailwind.config = {
       theme: {
         extend: {
-          colors: {
-            gold: '#C9A84C',
-            'gold-light': '#E8D5A3',
-            'gold-pale': '#F5EDD8',
-            charcoal: '#1F2937',
-            'charcoal-soft': '#374151',
-            'off-white': '#F9FAFB',
-            'warm-gray': '#F3F4F6',
-          },
           fontFamily: {
             heading: ['Montserrat', 'sans-serif'],
             body: ['Inter', 'sans-serif'],
@@ -30,105 +21,550 @@
     };
   </script>
   <style>
+    /* ─── CSS CUSTOM PROPERTIES ─── */
+    :root, [data-theme="dark"] {
+      --bg-base:        #111111;
+      --bg-surface:     #161616;
+      --bg-surface2:    #1A1A1A;
+      --bg-surface3:    #1E1E1E;
+      --border:         #2A2A2A;
+      --border-soft:    #222222;
+      --text-primary:   #F0EDE8;
+      --text-secondary: #A09890;
+      --text-muted:     #6B6560;
+      --nav-bg:         rgba(17,17,17,0.96);
+      --nav-scrolled:   rgba(17,17,17,0.99);
+      --nav-shadow:     0 1px 30px rgba(0,0,0,0.5);
+      --hero-overlay:   linear-gradient(135deg, rgba(17,17,17,0.93) 0%, rgba(20,18,14,0.85) 60%, rgba(17,17,17,0.7) 100%);
+      --card-hover-shadow: 0 16px 48px rgba(0,0,0,0.5);
+      --form-bg:        #1A1A1A;
+      --form-border:    #333333;
+      --form-placeholder: #555555;
+      --scrollbar-track: #111111;
+      --scrollbar-thumb: #333333;
+      --hours-row-border: #252525;
+      --footer-bar-border: #1A1A1A;
+      --staff-nabi-bg:  linear-gradient(135deg, #1C1808 0%, #2E2510 60%, #1A1609 100%);
+      --staff-alex-bg:  linear-gradient(135deg, #181818 0%, #222222 60%, #161616 100%);
+      --staff-sam-bg:   linear-gradient(135deg, #1A1610 0%, #26200E 60%, #181410 100%);
+      --avatar-bg:      #1E1E1E;
+      --compact-hours-bg: #161616;
+      --compact-hours-border: #1E1E1E;
+      --color-scheme:   dark;
+    }
+
+    [data-theme="light"] {
+      --bg-base:        #FFFFFF;
+      --bg-surface:     #F9FAFB;
+      --bg-surface2:    #FFFFFF;
+      --bg-surface3:    #F3F4F6;
+      --border:         #E5E7EB;
+      --border-soft:    #F3F4F6;
+      --text-primary:   #1F2937;
+      --text-secondary: #4B5563;
+      --text-muted:     #9CA3AF;
+      --nav-bg:         rgba(255,255,255,0.96);
+      --nav-scrolled:   rgba(255,255,255,0.99);
+      --nav-shadow:     0 1px 20px rgba(0,0,0,0.08);
+      --hero-overlay:   linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(249,250,251,0.85) 100%);
+      --card-hover-shadow: 0 12px 40px rgba(0,0,0,0.10);
+      --form-bg:        #FFFFFF;
+      --form-border:    #D1D5DB;
+      --form-placeholder: #9CA3AF;
+      --scrollbar-track: #F9FAFB;
+      --scrollbar-thumb: #D1D5DB;
+      --hours-row-border: #F3F4F6;
+      --footer-bar-border: #E5E7EB;
+      --staff-nabi-bg:  linear-gradient(135deg, #F5EDD8 0%, #E8D5A3 60%, #F0E4C0 100%);
+      --staff-alex-bg:  linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 60%, #F9FAFB 100%);
+      --staff-sam-bg:   linear-gradient(135deg, #FEF9EC 0%, #F5EDD8 60%, #FDF5E0 100%);
+      --avatar-bg:      #FFFFFF;
+      --compact-hours-bg: #F9FAFB;
+      --compact-hours-border: #F3F4F6;
+      --color-scheme:   light;
+    }
+
+    /* ─── RESET & BASE ─── */
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Inter', sans-serif; color: #1F2937; background: #FFFFFF; overflow-x: hidden; }
+    body {
+      font-family: 'Inter', sans-serif;
+      color: var(--text-primary);
+      background: var(--bg-base);
+      overflow-x: hidden;
+      transition: background 0.35s ease, color 0.35s ease;
+    }
 
-    /* Nav */
-    #navbar { transition: box-shadow 0.3s ease, background 0.3s ease; }
-    #navbar.scrolled { box-shadow: 0 1px 20px rgba(0,0,0,0.08); background: rgba(255,255,255,0.98); }
-    .nav-link { position: relative; }
+    /* ─── THEME TRANSITION ─── */
+    *, *::before, *::after {
+      transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+    }
+    /* Don't animate transforms — would interfere with hover effects */
+    .service-card, .staff-card { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease, background-color 0.35s ease; }
+
+    /* ─── NAV ─── */
+    #navbar {
+      background: var(--nav-bg);
+      backdrop-filter: blur(12px);
+      transition: box-shadow 0.3s ease, background 0.3s ease;
+    }
+    #navbar.scrolled { box-shadow: var(--nav-shadow); background: var(--nav-scrolled); }
+    .nav-link { position: relative; color: var(--text-secondary); transition: color 0.2s ease; }
+    .nav-link:hover { color: var(--text-primary); }
     .nav-link::after { content: ''; position: absolute; bottom: -2px; left: 0; width: 0; height: 1px; background: #C9A84C; transition: width 0.3s ease; }
     .nav-link:hover::after { width: 100%; }
 
-    /* Hero */
-    .hero-bg { background-image: linear-gradient(135deg, rgba(255,255,255,0.92) 0%, rgba(249,250,251,0.85) 100%), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=80'); background-size: cover; background-position: center; }
+    /* ─── THEME TOGGLE BUTTON ─── */
+    #theme-toggle {
+      width: 40px;
+      height: 22px;
+      background: var(--border);
+      border-radius: 11px;
+      position: relative;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+      transition: background 0.3s ease;
+    }
+    #theme-toggle::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #C9A84C;
+      transition: transform 0.3s ease;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+    }
+    [data-theme="light"] #theme-toggle::after { transform: translateX(18px); }
+    .toggle-icon { font-size: 13px; line-height: 1; }
 
-    /* Cards */
-    .service-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
-    .service-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,0,0,0.10); }
+    /* ─── HERO ─── */
+    .hero-bg {
+      background-image: var(--hero-overlay), url('https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&q=80');
+      background-size: cover;
+      background-position: center;
+    }
 
-    .staff-card { transition: transform 0.25s ease, box-shadow 0.25s ease; }
-    .staff-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,0,0,0.10); }
+    /* ─── CARDS ─── */
+    .service-card {
+      background: var(--bg-surface3);
+      border: 1px solid var(--border);
+    }
+    .service-card:hover { transform: translateY(-4px); box-shadow: var(--card-hover-shadow); border-color: #C9A84C44; }
 
-    /* Gold accent line */
-    .gold-line { display: block; width: 40px; height: 2px; background: #C9A84C; margin: 0 auto 1rem; }
-    .gold-line-left { display: block; width: 40px; height: 2px; background: #C9A84C; margin: 0 0 1rem; }
+    .staff-card {
+      background: var(--bg-surface2);
+      border: 1px solid var(--border);
+    }
+    .staff-card:hover { transform: translateY(-4px); box-shadow: var(--card-hover-shadow); border-color: #C9A84C55; }
 
-    /* Hamburger */
-    #mobile-menu { transition: opacity 0.3s ease, transform 0.3s ease; }
-    #mobile-menu.hidden { opacity: 0; pointer-events: none; transform: translateY(-8px); display: none !important; }
-    #mobile-menu.open { opacity: 1; pointer-events: all; transform: translateY(0); display: block !important; }
+    /* ─── GOLD ─── */
+    .gold-line { display: block; width: 40px; height: 2px; background: linear-gradient(90deg, #C9A84C, #9B7B2F); margin: 0 auto 1rem; }
+    .gold-line-left { display: block; width: 40px; height: 2px; background: linear-gradient(90deg, #C9A84C, #9B7B2F); margin: 0 0 1rem; }
+    .gold-glow { color: #C9A84C; }
+    [data-theme="dark"] .gold-glow { text-shadow: 0 0 28px rgba(201,168,76,0.35); }
 
-    /* Form inputs */
-    .form-input { transition: border-color 0.2s ease, box-shadow 0.2s ease; }
-    .form-input:focus { outline: none; border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.15); }
+    /* ─── MOBILE MENU ─── */
+    #mobile-menu { background: var(--bg-surface); border-color: var(--border); }
+    #mobile-menu.hidden { display: none !important; }
+    #mobile-menu.open  { display: block !important; }
+    .mobile-nav-link { color: var(--text-secondary); border-color: var(--border-soft); }
+    .mobile-nav-link:hover { color: #C9A84C; }
 
-    /* Divider */
-    .section-divider { border: none; border-top: 1px solid #E5E7EB; margin: 0; }
+    /* ─── FORM ─── */
+    .form-input {
+      background: var(--form-bg);
+      border: 1px solid var(--form-border);
+      color: var(--text-primary);
+      transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.35s ease;
+    }
+    .form-input::placeholder { color: var(--form-placeholder); }
+    .form-input:focus { outline: none; border-color: #C9A84C; box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
+    .form-input option { background: var(--bg-surface3); color: var(--text-primary); }
 
-    /* Hours row */
-    .hours-row:not(:last-child) { border-bottom: 1px solid #F3F4F6; }
+    /* ─── BUTTONS ─── */
+    .btn-gold { background: #C9A84C; color: #111; font-weight: 600; }
+    .btn-gold:hover { background: #dab94f; transform: translateY(-1px); box-shadow: 0 8px 24px rgba(201,168,76,0.3); }
+    .btn-outline { border: 1.5px solid #C9A84C66; color: #C9A84C; }
+    .btn-outline:hover { background: #C9A84C; color: #111; border-color: #C9A84C; transform: translateY(-1px); }
 
-    /* CTA button */
-    .btn-gold { background: #C9A84C; color: #fff; transition: background 0.2s ease, transform 0.15s ease; }
-    .btn-gold:hover { background: #b8963e; transform: translateY(-1px); }
-    .btn-outline { border: 1.5px solid #C9A84C; color: #C9A84C; transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease; }
-    .btn-outline:hover { background: #C9A84C; color: #fff; transform: translateY(-1px); }
+    /* ─── CAT SEPARATOR ─── */
+    .cat-line { flex: 1; height: 1px; background: linear-gradient(90deg, #C9A84C33, transparent); }
 
-    /* Map iframe placeholder */
-    .map-placeholder { background: #F3F4F6; border: 1px solid #E5E7EB; }
+    /* ─── HOURS TABLE ─── */
+    .hours-row { border-bottom: 1px solid var(--hours-row-border); }
 
-    /* Scroll reveal */
+    /* ─── MAP ─── */
+    .map-placeholder { background: var(--bg-surface3); border: 1px solid var(--border); }
+
+    /* ─── REVEAL ─── */
     .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
     .reveal.visible { opacity: 1; transform: none; }
 
-    @media (max-width: 640px) {
-      .hero-headline { font-size: 2.2rem; line-height: 1.15; }
+    /* ─── SCROLLBAR ─── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: var(--scrollbar-track); }
+    ::-webkit-scrollbar-thumb { background: var(--scrollbar-thumb); border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #C9A84C55; }
+
+    /* ── Gallery ── */
+    .gallery-item {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      cursor: pointer;
+      background: var(--bg-surface3);
+      border: 1px solid var(--border);
     }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.5s ease;
+    }
+    .gallery-item:hover img { transform: scale(1.06); }
+    .gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 55%);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      display: flex;
+      align-items: flex-end;
+      padding: 16px;
+    }
+    .gallery-item:hover .gallery-overlay { opacity: 1; }
+    .gallery-tag {
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #C9A84C;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    /* ── Lightbox ── */
+    #lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(0,0,0,0.95);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    #lightbox.active { opacity: 1; pointer-events: all; }
+    #lightbox img {
+      max-width: min(90vw, 900px);
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 12px;
+      box-shadow: 0 32px 80px rgba(0,0,0,0.8);
+    }
+    #lightbox-close {
+      position: absolute;
+      top: 20px;
+      right: 24px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    #lightbox-close:hover { background: rgba(255,255,255,0.2); }
+    #lightbox-prev, #lightbox-next {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: #fff;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    #lightbox-prev:hover, #lightbox-next:hover { background: rgba(201,168,76,0.35); border-color: #C9A84C66; }
+    #lightbox-prev { left: 16px; }
+    #lightbox-next { right: 16px; }
+    #lightbox-caption {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 11px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+      white-space: nowrap;
+    }
+
+    /* ── Video showreel ── */
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 20px;
+      background: var(--bg-surface3);
+      border: 1px solid var(--border);
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      border: 0;
+    }
+    .video-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      cursor: pointer;
+    }
+    .video-play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #C9A84C;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 32px rgba(201,168,76,0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    .video-placeholder:hover .video-play-btn {
+      transform: scale(1.1);
+      box-shadow: 0 12px 40px rgba(201,168,76,0.65);
+    }
+
+    /* ── WhatsApp FAB ── */
+    #whatsapp-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 24px;
+      z-index: 999;
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background: #25D366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 24px rgba(37,211,102,0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    #whatsapp-fab:hover { transform: scale(1.08); box-shadow: 0 10px 32px rgba(37,211,102,0.55); }
+    #whatsapp-fab .wa-pulse {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid rgba(37,211,102,0.4);
+      animation: wa-pulse 2.2s ease-out infinite;
+    }
+    @keyframes wa-pulse {
+      0%   { transform: scale(1); opacity: 1; }
+      70%  { transform: scale(1.4); opacity: 0; }
+      100% { transform: scale(1.4); opacity: 0; }
+    }
+
+    /* ── Review cards ── */
+    .review-card { transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease; }
+    .review-card:hover { transform: translateY(-3px); box-shadow: var(--card-hover-shadow); border-color: #C9A84C33 !important; }
+
+    /* Formspree managed visibility — must win over display:block from theme transitions */
+    [data-fs-success].hidden, [data-fs-error].hidden { display: none !important; }
+    [data-fs-success]:not(.hidden), [data-fs-error]:not(.hidden) { display: block !important; }
+
+    /* ══════════════════════════════════════════
+       RESPONSIVE — COMPREHENSIVE MOBILE FIX
+    ══════════════════════════════════════════ */
+
+    /* ── Gallery: mobile stacks to 2-col ── */
+    .gallery-grid-main {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .gallery-grid-main .gallery-item {
+      height: 160px;
+      grid-column: auto !important;
+      grid-row: auto !important;
+    }
+    .gallery-grid-row2 {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    .gallery-grid-row2 .gallery-item { height: 140px; }
+
+    /* ── Gallery: tablet 3-col ── */
+    @media (min-width: 640px) {
+      .gallery-grid-main { grid-template-columns: repeat(3, 1fr); }
+      .gallery-grid-main .gallery-item { height: 200px; }
+      .gallery-grid-row2 { grid-template-columns: repeat(3, 1fr); }
+      .gallery-grid-row2 .gallery-item { height: 180px; }
+    }
+
+    /* ── Gallery: desktop restores masonry ── */
+    @media (min-width: 1024px) {
+      .gallery-grid-main {
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: 220px 220px;
+      }
+      .gallery-grid-main .gallery-item { height: auto; }
+      .gallery-grid-main .g-tall-left  { grid-column: 1; grid-row: 1 / 3; }
+      .gallery-grid-main .g-top-ml     { grid-column: 2; grid-row: 1; }
+      .gallery-grid-main .g-top-mr     { grid-column: 3; grid-row: 1; }
+      .gallery-grid-main .g-tall-right { grid-column: 4; grid-row: 1 / 3; }
+      .gallery-grid-main .g-bot-ml     { grid-column: 2; grid-row: 2; }
+      .gallery-grid-main .g-bot-mr     { grid-column: 3; grid-row: 2; }
+      .gallery-grid-row2 { grid-template-columns: repeat(3, 1fr); }
+      .gallery-grid-row2 .gallery-item { height: 200px; }
+    }
+
+    /* ── Hero ── */
+    @media (max-width: 480px) {
+      .hero-headline { font-size: 1.9rem !important; line-height: 1.15; }
+    }
+    @media (min-width: 481px) and (max-width: 640px) {
+      .hero-headline { font-size: 2.2rem !important; line-height: 1.15; }
+    }
+
+    /* ── Hero stats: tighter on mobile ── */
+    @media (max-width: 480px) {
+      .hero-stats { gap: 1rem !important; }
+      .hero-stats .stat-div { padding-left: 1rem !important; }
+    }
+
+    /* ── Google rating badge: wraps on mobile ── */
+    .google-badge { flex-wrap: wrap; justify-content: center; }
+
+    /* ── Mock booking calendar slots ── */
+    .mock-slots {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+    @media (min-width: 400px) { .mock-slots { grid-template-columns: repeat(4, 1fr); } }
+
+    /* ── Mock week strip ── */
+    .mock-week { display: grid; grid-template-columns: repeat(7, 1fr); gap: 4px; }
+    @media (max-width: 360px) { .mock-week { gap: 2px; } }
+
+    /* ── Footer map height ── */
+    @media (max-width: 640px) { .footer-map { height: 240px !important; } }
+
+    /* ── Lightbox mobile ── */
+    @media (max-width: 640px) {
+      #lightbox img { max-width: 95vw; max-height: 78vh; }
+      #lightbox-prev { left: 6px; width: 36px; height: 36px; font-size: 14px; }
+      #lightbox-next { right: 6px; width: 36px; height: 36px; font-size: 14px; }
+      #lightbox-caption { font-size: 9px; bottom: 10px; white-space: normal; text-align: center; width: 90%; }
+    }
+
+    /* ── WhatsApp FAB: smaller on mobile ── */
+    @media (max-width: 640px) {
+      #whatsapp-fab { width: 50px; height: 50px; bottom: 20px; right: 16px; }
+    }
+
+    /* ── Universal overflow guard ── */
+    img, video, iframe, input, select, textarea { max-width: 100%; }
+    section, footer, nav { overflow-x: hidden; }
   </style>
 </head>
-<body class="bg-white text-charcoal">
+<body>
 
   <!-- ═══════════════════════════════════════════
        NAVIGATION
   ════════════════════════════════════════════ -->
-  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm">
+  <nav id="navbar" class="fixed top-0 left-0 right-0 z-50">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-      <div class="flex items-center justify-between h-16 sm:h-18">
+      <div class="flex items-center justify-between h-16">
+
         <!-- Logo -->
-        <a href="#" class="font-heading font-700 text-xl tracking-widest text-charcoal select-none">
-          A<span class="text-gold">&amp;</span>N&nbsp;<span class="font-300">STYLE</span>
+        <a href="#" class="font-heading font-700 text-xl tracking-widest select-none" style="color:var(--text-primary);">
+          A<span class="gold-glow">&amp;</span>N&nbsp;<span class="font-300" style="color:var(--text-secondary);">STYLE</span>
         </a>
 
         <!-- Desktop Nav -->
-        <div class="hidden md:flex items-center gap-8">
-          <a href="#services" class="nav-link font-body text-sm font-500 text-charcoal-soft tracking-wide hover:text-charcoal transition-colors">Services</a>
-          <a href="#team" class="nav-link font-body text-sm font-500 text-charcoal-soft tracking-wide hover:text-charcoal transition-colors">Team</a>
-          <a href="#hours" class="nav-link font-body text-sm font-500 text-charcoal-soft tracking-wide hover:text-charcoal transition-colors">Hours</a>
-          <a href="#booking" class="nav-link font-body text-sm font-500 text-charcoal-soft tracking-wide hover:text-charcoal transition-colors">Booking</a>
-          <a href="#contact" class="nav-link font-body text-sm font-500 text-charcoal-soft tracking-wide hover:text-charcoal transition-colors">Find Us</a>
+        <div class="hidden md:flex items-center gap-7">
+          <a href="#services" class="nav-link font-body text-sm font-500 tracking-wide">Services</a>
+          <a href="#team" class="nav-link font-body text-sm font-500 tracking-wide">Team</a>
+          <a href="#gallery" class="nav-link font-body text-sm font-500 tracking-wide">Gallery</a>
+          <a href="#reviews" class="nav-link font-body text-sm font-500 tracking-wide">Reviews</a>
+          <a href="#hours" class="nav-link font-body text-sm font-500 tracking-wide">Hours</a>
+          <a href="#booking" class="nav-link font-body text-sm font-500 tracking-wide">Booking</a>
+          <a href="#contact" class="nav-link font-body text-sm font-500 tracking-wide">Find Us</a>
+
+          <!-- Theme toggle -->
+          <div class="flex items-center gap-2" aria-label="Toggle colour theme">
+            <span class="toggle-icon">🌙</span>
+            <button id="theme-toggle" onclick="toggleTheme()" aria-label="Switch theme"></button>
+            <span class="toggle-icon">☀️</span>
+          </div>
+
           <a href="#booking" class="btn-gold px-5 py-2 rounded-full text-sm font-heading font-600 tracking-wide">Book Now</a>
-          <a href="dark.html" class="p-2 text-sm font-medium text-charcoal hover:text-gold flex items-center gap-1">🌙 Dark Mode</a>
         </div>
 
-        <!-- Hamburger -->
-        <button id="hamburger" aria-label="Open menu" class="md:hidden flex flex-col gap-1.5 p-2">
-          <span class="block w-6 h-0.5 bg-charcoal transition-all duration-300" id="hb1"></span>
-          <span class="block w-6 h-0.5 bg-charcoal transition-all duration-300" id="hb2"></span>
-          <span class="block w-4 h-0.5 bg-charcoal transition-all duration-300" id="hb3"></span>
-        </button>
+        <!-- Mobile right: toggle + hamburger -->
+        <div class="md:hidden flex items-center gap-2">
+          <div class="flex items-center gap-1.5">
+            <span class="toggle-icon" style="font-size:11px;">🌙</span>
+            <button id="theme-toggle-mob" onclick="toggleTheme()" aria-label="Switch theme"
+              style="width:34px;height:19px;background:var(--border);border-radius:9px;position:relative;cursor:pointer;border:1px solid var(--border);">
+              <span id="mob-knob" style="position:absolute;top:1.5px;left:1.5px;width:14px;height:14px;border-radius:50%;background:#C9A84C;transition:transform 0.3s ease;display:block;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></span>
+            </button>
+            <span class="toggle-icon" style="font-size:11px;">☀️</span>
+          </div>
+          <button id="hamburger" aria-label="Open menu" class="flex flex-col gap-1.5 p-2">
+            <span class="block w-6 h-0.5 transition-all duration-300" style="background:var(--text-primary);" id="hb1"></span>
+            <span class="block w-6 h-0.5 transition-all duration-300" style="background:var(--text-primary);" id="hb2"></span>
+            <span class="block w-4 h-0.5 transition-all duration-300" style="background:var(--text-primary);" id="hb3"></span>
+          </button>
+        </div>
+
       </div>
     </div>
 
     <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-white border-t border-gray-100 px-5 pb-6 pt-4">
+    <div id="mobile-menu" class="hidden md:hidden border-t px-5 pb-6 pt-4">
       <div class="flex flex-col gap-4">
-        <a href="#services" class="mobile-nav-link font-body text-sm font-500 text-charcoal-soft py-2 border-b border-gray-50 tracking-wide">Services</a>
-        <a href="#team" class="mobile-nav-link font-body text-sm font-500 text-charcoal-soft py-2 border-b border-gray-50 tracking-wide">Team</a>
-        <a href="#hours" class="mobile-nav-link font-body text-sm font-500 text-charcoal-soft py-2 border-b border-gray-50 tracking-wide">Hours</a>
-        <a href="#booking" class="mobile-nav-link font-body text-sm font-500 text-charcoal-soft py-2 border-b border-gray-50 tracking-wide">Booking</a>
-        <a href="#contact" class="mobile-nav-link font-body text-sm font-500 text-charcoal-soft py-2 border-b border-gray-50 tracking-wide">Find Us</a>
+        <a href="#services" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Services</a>
+        <a href="#team" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Team</a>
+        <a href="#gallery" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Gallery</a>
+        <a href="#reviews" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Reviews</a>
+        <a href="#hours" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Hours</a>
+        <a href="#booking" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Booking</a>
+        <a href="#contact" class="mobile-nav-link font-body text-sm font-500 py-2 border-b tracking-wide transition-colors">Find Us</a>
         <a href="#booking" class="btn-gold mt-2 text-center px-5 py-3 rounded-full text-sm font-heading font-600 tracking-wide">Book Now</a>
       </div>
     </div>
@@ -141,31 +577,29 @@
   <section class="hero-bg min-h-screen flex items-center pt-16">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-24 sm:py-32 w-full">
       <div class="max-w-2xl">
-        <p class="font-body text-gold text-xs tracking-[0.25em] uppercase font-500 mb-5 reveal">Premium Salon &amp; Barbering</p>
-        <h1 class="hero-headline font-heading font-800 text-charcoal leading-tight mb-6 reveal" style="font-size: clamp(2.4rem, 5vw, 4rem); letter-spacing: -0.02em;">
-          Precision Grooming.<br /><span class="text-gold">Effortless</span> Style.
+        <p class="font-body text-xs tracking-[0.3em] uppercase font-500 mb-5 reveal" style="color:#C9A84C;">Premium Salon &amp; Barbering</p>
+        <h1 class="hero-headline font-heading font-800 leading-tight mb-6 reveal" style="font-size:clamp(2.4rem,5vw,4rem);letter-spacing:-0.02em;color:var(--text-primary);">
+          Precision Grooming.<br /><span class="gold-glow">Effortless</span> Style.
         </h1>
-        <p class="font-body text-charcoal-soft text-lg font-300 leading-relaxed mb-10 max-w-lg reveal">
+        <p class="font-body text-lg font-300 leading-relaxed mb-10 max-w-lg reveal" style="color:var(--text-secondary);">
           Experience premium hairdressing and barbering tailored to your individual look — in a space designed around calm, craft, and care.
         </p>
         <div class="flex flex-wrap gap-4 reveal">
           <a href="#booking" class="btn-gold px-8 py-3.5 rounded-full font-heading font-600 text-sm tracking-wide">Book Online</a>
           <a href="#services" class="btn-outline px-8 py-3.5 rounded-full font-heading font-600 text-sm tracking-wide">View Services</a>
         </div>
-
-        <!-- Accent stats row -->
-        <div class="flex gap-10 mt-16 reveal">
+        <div class="hero-stats flex gap-10 mt-16 reveal" style="flex-wrap:wrap;">
           <div>
-            <p class="font-heading font-700 text-2xl text-charcoal">19+</p>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide uppercase">Services</p>
+            <p class="font-heading font-700 text-2xl" style="color:var(--text-primary);">19+</p>
+            <p class="font-body text-xs tracking-wide uppercase" style="color:var(--text-muted);">Services</p>
           </div>
-          <div class="border-l border-gray-200 pl-10">
-            <p class="font-heading font-700 text-2xl text-charcoal">3</p>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide uppercase">Specialists</p>
+          <div class="stat-div pl-10" style="border-left:1px solid var(--border);">
+            <p class="font-heading font-700 text-2xl" style="color:var(--text-primary);">3</p>
+            <p class="font-body text-xs tracking-wide uppercase" style="color:var(--text-muted);">Specialists</p>
           </div>
-          <div class="border-l border-gray-200 pl-10">
-            <p class="font-heading font-700 text-2xl text-charcoal">7 days</p>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide uppercase">A week</p>
+          <div class="stat-div pl-10" style="border-left:1px solid var(--border);">
+            <p class="font-heading font-700 text-2xl" style="color:var(--text-primary);">7 days</p>
+            <p class="font-body text-xs tracking-wide uppercase" style="color:var(--text-muted);">A week</p>
           </div>
         </div>
       </div>
@@ -176,202 +610,175 @@
   <!-- ═══════════════════════════════════════════
        SERVICES
   ════════════════════════════════════════════ -->
-  <section id="services" class="bg-off-white py-24 sm:py-32">
+  <section id="services" style="background:var(--bg-surface);" class="py-24 sm:py-32">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
 
-      <!-- Section Header -->
       <div class="text-center mb-16 reveal">
         <span class="gold-line"></span>
-        <p class="font-body text-gold text-xs tracking-[0.2em] uppercase font-500 mb-3">What We Offer</p>
-        <h2 class="font-heading font-700 text-3xl sm:text-4xl text-charcoal" style="letter-spacing: -0.01em;">Services &amp; Pricing</h2>
-        <p class="font-body text-charcoal-soft text-base mt-4 max-w-md mx-auto font-300">Every price is transparent. No surprises — just exceptional work.</p>
+        <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">What We Offer</p>
+        <h2 class="font-heading font-700 text-3xl sm:text-4xl" style="letter-spacing:-0.01em;color:var(--text-primary);">Services &amp; Pricing</h2>
+        <p class="font-body text-base mt-4 max-w-md mx-auto font-300" style="color:var(--text-secondary);">Every price is transparent. No surprises — just exceptional work.</p>
       </div>
 
-      <!-- Gents & Barbering -->
+      <!-- Gents -->
       <div class="mb-14 reveal">
-        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase text-gold mb-6 flex items-center gap-3">
-          <span>Gents &amp; Barbering</span>
-          <span class="flex-1 h-px bg-gold-light"></span>
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Gents &amp; Barbering</span><span class="cat-line"></span>
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Gents Hair</h4>
-              <span class="font-heading font-700 text-gold text-lg">£28</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Gents Hair</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£28</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">30 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">30 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Skin Fade</h4>
-              <span class="font-heading font-700 text-gold text-lg">£32</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Skin Fade</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£32</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">45 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">45 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Clipper Cut</h4>
-              <span class="font-heading font-700 text-gold text-lg">£20</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Clipper Cut</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£20</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">20 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">20 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Beard Trim</h4>
-              <span class="font-heading font-700 text-gold text-lg">£15</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Beard Trim</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£15</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">15 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">15 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Beard Shape Up</h4>
-              <span class="font-heading font-700 text-gold text-lg">£18</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Beard Shape Up</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£18</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">20 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">20 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Hot Towel Shave</h4>
-              <span class="font-heading font-700 text-gold text-lg">£30</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Hot Towel Shave</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£30</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">35 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">35 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Students Haircut</h4>
-              <span class="font-heading font-700 text-gold text-lg">£24</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Students Haircut</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£24</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">30 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">30 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">O.A.P Haircut</h4>
-              <span class="font-heading font-700 text-gold text-lg">£20</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">O.A.P Haircut</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£20</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">30 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">30 minutes</p>
           </div>
-
         </div>
       </div>
 
-      <!-- Ladies & Styling -->
+      <!-- Ladies -->
       <div class="mb-14 reveal">
-        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase text-gold mb-6 flex items-center gap-3">
-          <span>Ladies &amp; Styling</span>
-          <span class="flex-1 h-px bg-gold-light"></span>
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Ladies &amp; Styling</span><span class="cat-line"></span>
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Ladies Hair Styling</h4>
-              <span class="font-heading font-700 text-gold text-lg">£45</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Ladies Hair Styling</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£45</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">45 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">45 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Hair Salon Service</h4>
-              <span class="font-heading font-700 text-gold text-lg">£50</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Hair Salon Service</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£50</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">60 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">60 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Hairdressing Services</h4>
-              <span class="font-heading font-700 text-gold text-lg">£55</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Hairdressing Services</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£55</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">60 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">60 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Wash, Cut &amp; Blow Dry</h4>
-              <span class="font-heading font-700 text-gold text-lg">£65</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Wash, Cut &amp; Blow Dry</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£65</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">60 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">60 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Hairstyling</h4>
-              <span class="font-heading font-700 text-gold text-lg">£40</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Hairstyling</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£40</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">45 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">45 minutes</p>
           </div>
-
         </div>
       </div>
 
-      <!-- Color & Technical -->
+      <!-- Colour -->
       <div class="mb-14 reveal">
-        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase text-gold mb-6 flex items-center gap-3">
-          <span>Colour &amp; Technical</span>
-          <span class="flex-1 h-px bg-gold-light"></span>
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Colour &amp; Technical</span><span class="cat-line"></span>
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Full Head Highlights</h4>
-              <span class="font-heading font-700 text-gold text-lg">£110</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Full Head Highlights</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£110</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">120 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">120 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Half Head Highlights</h4>
-              <span class="font-heading font-700 text-gold text-lg">£85</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Half Head Highlights</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£85</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">90 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">90 minutes</p>
           </div>
-
         </div>
       </div>
 
-      <!-- Kids / Under 12 -->
+      <!-- Kids -->
       <div class="reveal">
-        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase text-gold mb-6 flex items-center gap-3">
-          <span>Kids / Under 12</span>
-          <span class="flex-1 h-px bg-gold-light"></span>
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Kids / Under 12</span><span class="cat-line"></span>
         </h3>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Under 12s</h4>
-              <span class="font-heading font-700 text-gold text-lg">£18</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Under 12s</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£18</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">25 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">25 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Boy's Haircut</h4>
-              <span class="font-heading font-700 text-gold text-lg">£18</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Boy's Haircut</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£18</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">25 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">25 minutes</p>
           </div>
-
-          <div class="service-card bg-white border border-gray-100 rounded-2xl p-6 shadow-sm">
+          <div class="service-card rounded-2xl p-6">
             <div class="flex justify-between items-start mb-3">
-              <h4 class="font-heading font-600 text-charcoal text-base">Girl's Cut</h4>
-              <span class="font-heading font-700 text-gold text-lg">£22</span>
+              <h4 class="font-heading font-600 text-base" style="color:var(--text-primary);">Girl's Cut</h4>
+              <span class="font-heading font-700 text-lg" style="color:#C9A84C;">£22</span>
             </div>
-            <p class="font-body text-xs text-charcoal-soft tracking-wide">30 minutes</p>
+            <p class="font-body text-xs tracking-wide" style="color:var(--text-muted);">30 minutes</p>
           </div>
-
         </div>
       </div>
 
@@ -382,57 +789,473 @@
   <!-- ═══════════════════════════════════════════
        TEAM
   ════════════════════════════════════════════ -->
-  <section id="team" class="bg-white py-24 sm:py-32">
+  <section id="team" style="background:var(--bg-base);" class="py-24 sm:py-32">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-
       <div class="text-center mb-16 reveal">
         <span class="gold-line"></span>
-        <p class="font-body text-gold text-xs tracking-[0.2em] uppercase font-500 mb-3">The People Behind the Chair</p>
-        <h2 class="font-heading font-700 text-3xl sm:text-4xl text-charcoal" style="letter-spacing: -0.01em;">Meet the Team</h2>
-        <p class="font-body text-charcoal-soft text-base mt-4 max-w-md mx-auto font-300">Three specialists. One shared commitment to outstanding work.</p>
+        <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">The People Behind the Chair</p>
+        <h2 class="font-heading font-700 text-3xl sm:text-4xl" style="letter-spacing:-0.01em;color:var(--text-primary);">Meet the Team</h2>
+        <p class="font-body text-base mt-4 max-w-md mx-auto font-300" style="color:var(--text-secondary);">Three specialists. One shared commitment to outstanding work.</p>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         <!-- Nabi -->
-        <div class="staff-card bg-off-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm reveal">
-          <div class="h-52 bg-gradient-to-br from-gold-pale to-gold-light flex items-end px-6 pb-5 relative">
-            <div class="w-20 h-20 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center border-2 border-white shadow-md absolute bottom-0 translate-y-1/2 left-6">
-              <span class="font-heading font-700 text-gold text-2xl">N</span>
+        <div class="staff-card rounded-3xl overflow-hidden reveal">
+          <div class="h-52 flex items-end px-6 pb-5 relative" style="background:var(--staff-nabi-bg);">
+            <div class="absolute inset-0 opacity-20" style="background:radial-gradient(circle at 30% 40%, #C9A84C33, transparent 60%);"></div>
+            <div class="w-20 h-20 rounded-full flex items-center justify-center border-2 absolute bottom-0 translate-y-1/2 left-6" style="background:var(--avatar-bg);border-color:#C9A84C55;">
+              <span class="font-heading font-700 text-2xl" style="color:#C9A84C;">N</span>
             </div>
           </div>
           <div class="pt-14 px-6 pb-7">
-            <h3 class="font-heading font-700 text-charcoal text-xl mb-1">Nabi</h3>
-            <p class="font-body text-gold text-xs tracking-[0.15em] uppercase font-500 mb-3">Master Barber &amp; Stylist</p>
-            <p class="font-body text-charcoal-soft text-sm leading-relaxed font-300">Specialist in sharp skin fades and precision blade work. Known for clean lines and an effortless finish every time.</p>
+            <h3 class="font-heading font-700 text-xl mb-1" style="color:var(--text-primary);">Nabi</h3>
+            <p class="font-body text-xs tracking-[0.15em] uppercase font-500 mb-3" style="color:#C9A84C;">Master Barber &amp; Stylist</p>
+            <p class="font-body text-sm leading-relaxed font-300" style="color:var(--text-secondary);">Specialist in sharp skin fades and precision blade work. Known for clean lines and an effortless finish every time.</p>
           </div>
         </div>
 
         <!-- Alex -->
-        <div class="staff-card bg-off-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm reveal">
-          <div class="h-52 bg-gradient-to-br from-gray-100 to-gray-200 flex items-end px-6 pb-5 relative">
-            <div class="w-20 h-20 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center border-2 border-white shadow-md absolute bottom-0 translate-y-1/2 left-6">
-              <span class="font-heading font-700 text-charcoal-soft text-2xl">A</span>
+        <div class="staff-card rounded-3xl overflow-hidden reveal">
+          <div class="h-52 flex items-end px-6 pb-5 relative" style="background:var(--staff-alex-bg);">
+            <div class="w-20 h-20 rounded-full flex items-center justify-center border-2 absolute bottom-0 translate-y-1/2 left-6" style="background:var(--avatar-bg);border-color:var(--border);">
+              <span class="font-heading font-700 text-2xl" style="color:var(--text-secondary);">A</span>
             </div>
           </div>
           <div class="pt-14 px-6 pb-7">
-            <h3 class="font-heading font-700 text-charcoal text-xl mb-1">Alex</h3>
-            <p class="font-body text-gold text-xs tracking-[0.15em] uppercase font-500 mb-3">Senior Hairdresser</p>
-            <p class="font-body text-charcoal-soft text-sm leading-relaxed font-300">Specialist in Wash, Cut &amp; Blow Dry and contemporary ladies' styling. Alex brings detail-oriented precision to every appointment.</p>
+            <h3 class="font-heading font-700 text-xl mb-1" style="color:var(--text-primary);">Alex</h3>
+            <p class="font-body text-xs tracking-[0.15em] uppercase font-500 mb-3" style="color:#C9A84C;">Senior Hairdresser</p>
+            <p class="font-body text-sm leading-relaxed font-300" style="color:var(--text-secondary);">Specialist in Wash, Cut &amp; Blow Dry and contemporary ladies' styling. Alex brings detail-oriented precision to every appointment.</p>
           </div>
         </div>
 
         <!-- Sam -->
-        <div class="staff-card bg-off-white border border-gray-100 rounded-3xl overflow-hidden shadow-sm reveal">
-          <div class="h-52 bg-gradient-to-br from-gold-pale via-white to-gray-100 flex items-end px-6 pb-5 relative">
-            <div class="w-20 h-20 rounded-full bg-white/80 backdrop-blur-sm flex items-center justify-center border-2 border-white shadow-md absolute bottom-0 translate-y-1/2 left-6">
-              <span class="font-heading font-700 text-gold text-2xl">S</span>
+        <div class="staff-card rounded-3xl overflow-hidden reveal">
+          <div class="h-52 flex items-end px-6 pb-5 relative" style="background:var(--staff-sam-bg);">
+            <div class="absolute inset-0 opacity-20" style="background:radial-gradient(circle at 50% 50%, #C9A84C22, transparent 60%);"></div>
+            <div class="w-20 h-20 rounded-full flex items-center justify-center border-2 absolute bottom-0 translate-y-1/2 left-6" style="background:var(--avatar-bg);border-color:#C9A84C44;">
+              <span class="font-heading font-700 text-2xl" style="color:#C9A84C;">S</span>
             </div>
           </div>
           <div class="pt-14 px-6 pb-7">
-            <h3 class="font-heading font-700 text-charcoal text-xl mb-1">Sam</h3>
-            <p class="font-body text-gold text-xs tracking-[0.15em] uppercase font-500 mb-3">Colour Specialist</p>
-            <p class="font-body text-charcoal-soft text-sm leading-relaxed font-300">Expert in full and half-head technical highlights. Sam's eye for tone and placement delivers results that look effortlessly natural.</p>
+            <h3 class="font-heading font-700 text-xl mb-1" style="color:var(--text-primary);">Sam</h3>
+            <p class="font-body text-xs tracking-[0.15em] uppercase font-500 mb-3" style="color:#C9A84C;">Colour Specialist</p>
+            <p class="font-body text-sm leading-relaxed font-300" style="color:var(--text-secondary);">Expert in full and half-head technical highlights. Sam's eye for tone and placement delivers results that look effortlessly natural.</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       GALLERY & SHOWREEL
+  ════════════════════════════════════════════ -->
+  <section id="gallery" style="background:var(--bg-surface);" class="py-24 sm:py-32">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+
+      <!-- Section header -->
+      <div class="text-center mb-16 reveal">
+        <span class="gold-line"></span>
+        <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">The Work Speaks</p>
+        <h2 class="font-heading font-700 text-3xl sm:text-4xl" style="letter-spacing:-0.01em;color:var(--text-primary);">Portfolio &amp; Showreel</h2>
+        <p class="font-body text-base mt-4 max-w-md mx-auto font-300" style="color:var(--text-secondary);">Every cut, fade, and colour you see below was done right here at A&amp;N Style.</p>
+      </div>
+
+      <!-- ── PHOTO GALLERY GRID ── -->
+      <div class="mb-6 reveal">
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Photo Gallery</span><span class="cat-line"></span>
+        </h3>
+      </div>
+
+      <!-- Masonry-style grid: responsive via CSS classes -->
+      <div class="gallery-grid-main mb-16 reveal">
+
+        <!-- Large tall — col 1, spans 2 rows -->
+        <div class="gallery-item g-tall-left" onclick="openLightbox(0)">
+          <img src="https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=800&q=80" alt="Skin fade haircut" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Skin Fade</span></div>
+        </div>
+
+        <!-- Top middle-left -->
+        <div class="gallery-item g-top-ml" onclick="openLightbox(1)">
+          <img src="https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=700&q=80" alt="Gents haircut" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Gents Cut</span></div>
+        </div>
+
+        <!-- Top middle-right -->
+        <div class="gallery-item g-top-mr" onclick="openLightbox(2)">
+          <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=700&q=80" alt="Beard shape up" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Beard Shape Up</span></div>
+        </div>
+
+        <!-- Large tall — col 4, spans 2 rows -->
+        <div class="gallery-item g-tall-right" onclick="openLightbox(3)">
+          <img src="./images_and_videos/ladiesstyling.jpg" alt="Ladies styling" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Ladies Styling</span></div>
+        </div>
+
+        <!-- Bottom middle-left -->
+        <div class="gallery-item g-bot-ml" onclick="openLightbox(4)">
+          <img src="./images_and_videos/hottowelshave.jpg" alt="Hot towel shave" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Hot Towel Shave</span></div>
+        </div>
+
+        <!-- Bottom middle-right -->
+        <div class="gallery-item g-bot-mr" onclick="openLightbox(5)">
+          <img src="https://images.unsplash.com/photo-1560869713-7d0a29430803?w=700&q=80" alt="Colour highlights" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Highlights</span></div>
+        </div>
+
+      </div>
+
+      <!-- Second row — 3 equal cards -->
+      <div class="gallery-grid-row2 mb-6 reveal">
+
+        <div class="gallery-item" onclick="openLightbox(6)">
+          <img src="./images_and_videos/clipercut.webp" alt="Clipper cut" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Clipper Cut</span></div>
+        </div>
+
+        <div class="gallery-item" onclick="openLightbox(7)">
+          <img src="https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=700&q=80" alt="Wash cut blow dry" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Wash, Cut &amp; Blow Dry</span></div>
+        </div>
+
+        <div class="gallery-item" onclick="openLightbox(8)">
+          <img src="https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=700&q=80" alt="Kids haircut" loading="lazy" />
+          <div class="gallery-overlay"><span class="gallery-tag">Kids' Cut</span></div>
+        </div>
+
+      </div>
+
+      
+      <!-- ── VIDEO SHOWREEL ── -->
+      <div class="mb-6 reveal">
+        <h3 class="font-heading font-600 text-xs tracking-[0.2em] uppercase mb-6 flex items-center gap-3" style="color:#C9A84C;">
+          <span>Video Showreel</span><span class="cat-line"></span>
+        </h3>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-8 lg:gap-12 items-center reveal">
+
+        <!-- Left: copy -->
+        <div class="lg:col-span-2">
+          <p class="font-body text-base font-300 leading-relaxed mb-6" style="color:var(--text-secondary);">
+            Watch Nabi work. A 60-second showreel is worth more than any description — it shows precision, speed, and the kind of finish that brings clients back every time.
+          </p>
+          <div class="flex flex-col gap-3">
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#C9A84C;"></span>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Live fade work — start to finish</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#C9A84C;"></span>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Beard detailing and blade technique</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="w-2 h-2 rounded-full flex-shrink-0" style="background:#C9A84C;"></span>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">The A&amp;N atmosphere and finish</p>
+            </div>
+          </div>
+          <!--<div class="mt-8 px-5 py-4 rounded-2xl" style="background:var(--bg-surface3);border:1px solid var(--border);">
+            <p class="font-body text-xs font-500 mb-1" style="color:#C9A84C;">📹 How to add your video</p>
+            <p class="font-body text-xs font-300 leading-relaxed" style="color:var(--text-muted);">Upload a reel to YouTube or paste a direct MP4 URL, then replace the embed URL in the code. Instagram Reels can be embedded too.</p>
+          </div>-->
+        </div>
+
+        <!-- Right: video embed -->        
+        <div class="lg:col-span-3">
+
+          <div class="video-wrapper" style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:20px;border:1px solid var(--border);">
+            
+            <!-- Local HTML5 Video Player playing inside your site -->
+            <video 
+              controls 
+              playsinline
+              poster="https://img.youtube.com/vi/mVoCtszCYJM/maxresdefault.jpg"
+              style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:20px;">
+              
+              <!-- Change showreel.mp4 to your actual downloaded file name -->
+              <source src="./images_and_videos/A&N Style.mp4" type="video/mp4">
+              
+              Your browser does not support the video tag.
+            </video>
+
+          </div>   
+
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ── LIGHTBOX ── -->
+  <div id="lightbox" onclick="closeLightboxOnBg(event)">
+    <button id="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+    <button id="lightbox-prev" onclick="lightboxNav(-1)" aria-label="Previous">&#8592;</button>
+    <img id="lightbox-img" src="" alt="" />
+    <button id="lightbox-next" onclick="lightboxNav(1)" aria-label="Next">&#8594;</button>
+    <span id="lightbox-caption"></span>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════
+       REVIEWS / TESTIMONIALS
+  ════════════════════════════════════════════ -->
+  <section id="reviews" style="background:var(--bg-base);" class="py-24 sm:py-32">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+
+      <div class="text-center mb-16 reveal">
+        <span class="gold-line"></span>
+        <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">What Our Clients Say</p>
+        <h2 class="font-heading font-700 text-3xl sm:text-4xl" style="letter-spacing:-0.01em;color:var(--text-primary);">Real Reviews</h2>
+        <p class="font-body text-base mt-4 max-w-md mx-auto font-300" style="color:var(--text-secondary);">Straight from our clients — no filters, no fluff.</p>
+        <!-- Google rating summary -->
+        <div class="google-badge inline-flex items-center gap-3 mt-6 px-5 py-3 rounded-full" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-0.5">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <span class="font-heading font-700 text-sm" style="color:var(--text-primary);">5.0</span>
+          <span class="font-body text-xs" style="color:var(--text-muted);">on Google</span>
+          <span style="width:1px;height:14px;background:var(--border);display:inline-block;"></span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          <span class="font-body text-xs" style="color:var(--text-muted);">Google Reviews</span>
+        </div>
+      </div>
+
+      <!-- Review cards carousel-style grid -->
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 reveal">
+
+        <!-- Review 1 -->
+        <div class="review-card rounded-2xl p-7 flex flex-col gap-4" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="font-body text-sm font-300 leading-relaxed flex-1" style="color:var(--text-secondary);">"Best barber in the area without a doubt!!!!!Sammy has been cutting my hair for the last 14 years & I have never been disappointed… Always a great service…. Highly recommend!!!!!"</p>
+          <div class="flex items-center gap-3 pt-2" style="border-top:1px solid var(--border);">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-heading font-700 text-sm flex-shrink-0" style="background:var(--bg-surface);color:#C9A84C;">M</div>
+            <div>
+              <p class="font-heading font-600 text-sm" style="color:var(--text-primary);">Oliver Van Greken</p>
+              <p class="font-body text-xs" style="color:var(--text-muted);">a month ago</p>
+            </div>
+            <div class="ml-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 2 -->
+        <div class="review-card rounded-2xl p-7 flex flex-col gap-4" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="font-body text-sm font-300 leading-relaxed flex-1" style="color:var(--text-secondary);">"Sammy is the best! Lovely vibe and he’s great with the scissors Has cut high end footballers hair in the past too! (Declan Rice and Jarrod Bowen) and as a West Ham fan ⚒️⚒️"</p>
+          <div class="flex items-center gap-3 pt-2" style="border-top:1px solid var(--border);">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-heading font-700 text-sm flex-shrink-0" style="background:var(--bg-surface);color:#C9A84C;">S</div>
+            <div>
+              <p class="font-heading font-600 text-sm" style="color:var(--text-primary);">Matty Long</p>
+              <p class="font-body text-xs" style="color:var(--text-muted);">Local Guide · 3 month ago</p>
+            </div>
+            <div class="ml-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 3 -->
+        <div class="review-card rounded-2xl p-7 flex flex-col gap-4" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="font-body text-sm font-300 leading-relaxed flex-1" style="color:var(--text-secondary);">"I absolutely love this barber shop. Sammy is so good and talented. I always ask my barber, who cuts your hair? I do this because if the barber trusts the other barber, he must be legit. I can totally say that Sammy is legit. See photo evidence below."</p>
+          <div class="flex items-center gap-3 pt-2" style="border-top:1px solid var(--border);">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-heading font-700 text-sm flex-shrink-0" style="background:var(--bg-surface);color:#C9A84C;">P</div>
+            <div>
+              <p class="font-heading font-600 text-sm" style="color:var(--text-primary);">Marty Ozinga</p>
+              <p class="font-body text-xs" style="color:var(--text-muted);">a year ago</p>
+            </div>
+            <div class="ml-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 4 -->
+        <div class="review-card rounded-2xl p-7 flex flex-col gap-4" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="font-body text-sm font-300 leading-relaxed flex-1" style="color:var(--text-secondary);">"Sami always takes the effort to go the extra mile. A true Shah of the barbering profession. A great cut at a great price. My first recommendation to any friends in the area"</p>
+          <div class="flex items-center gap-3 pt-2" style="border-top:1px solid var(--border);">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-heading font-700 text-sm flex-shrink-0" style="background:var(--bg-surface);color:#C9A84C;">J</div>
+            <div>
+              <p class="font-heading font-600 text-sm" style="color:var(--text-primary);">"John Moore"</p>
+              <p class="font-body text-xs" style="color:var(--text-muted);">3 months ago</p>
+            </div>
+            <div class="ml-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- Review 5 -->
+        <div class="review-card rounded-2xl p-7 flex flex-col gap-4" style="background:var(--bg-surface3);border:1px solid var(--border);">
+          <div class="flex gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <p class="font-body text-sm font-300 leading-relaxed flex-1" style="color:var(--text-secondary);">"Amazing energy and they all know how to make you feel at home while getting your haircut. Sammy is amazing ( they all are) and if you come with an idea, either he will do just what you want or adapt it a little bit to your type of hair and face but your guaranteed to be happy about the end result. 100% recommend."</p>
+          <div class="flex items-center gap-3 pt-2" style="border-top:1px solid var(--border);">
+            <div class="w-9 h-9 rounded-full flex items-center justify-center font-heading font-700 text-sm flex-shrink-0" style="background:var(--bg-surface);color:#C9A84C;">R</div>
+            <div>
+              <p class="font-heading font-600 text-sm" style="color:var(--text-primary);">Jose Meneses</p>
+              <p class="font-body text-xs" style="color:var(--text-muted);">6 months ago</p>
+            </div>
+            <div class="ml-auto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA review card -->
+        <div class="review-card rounded-2xl p-7 flex flex-col items-center justify-center gap-5 text-center" style="background:var(--bg-surface);border:1px dashed var(--border-soft);">
+          <div class="flex gap-1">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="#C9A84C"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          </div>
+          <div>
+            <p class="font-heading font-600 text-base mb-2" style="color:var(--text-primary);">Had a great experience?</p>
+            <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Your review helps other clients discover A&amp;N Style and supports the team.</p>
+          </div>
+          <a href="https://maps.app.goo.gl/q8zmYjgaR36RgRXp7" target="_blank" rel="noopener noreferrer"
+            class="btn-gold px-6 py-2.5 rounded-full font-heading font-600 text-xs tracking-wide">
+            Leave a Google Review
+          </a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════════
+       REAL-TIME BOOKING WIDGET
+  ════════════════════════════════════════════ -->
+  <section id="book-online" style="background:var(--bg-surface);" class="py-24 sm:py-32">
+    <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
+      <div class="grid grid-cols-1 lg:grid-cols-5 gap-10 lg:gap-16 items-start">
+
+        <!-- Left: context -->
+        <div class="lg:col-span-2 reveal">
+          <span class="gold-line-left"></span>
+          <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">Instant Availability</p>
+          <h2 class="font-heading font-700 text-3xl sm:text-4xl mb-5" style="letter-spacing:-0.01em;color:var(--text-primary);">Book a Real-Time Slot</h2>
+          <p class="font-body text-base font-300 leading-relaxed mb-8" style="color:var(--text-secondary);">
+            See live availability, pick your stylist, choose your time, and confirm instantly — no waiting for a callback.
+          </p>
+          <div class="flex flex-col gap-4">
+            <div class="flex items-center gap-4 px-4 py-3.5 rounded-xl" style="background:var(--bg-surface3);border:1px solid var(--border);">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:#1A2A1A;">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#4CAF50" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Live calendar — see exactly what's free</p>
+            </div>
+            <div class="flex items-center gap-4 px-4 py-3.5 rounded-xl" style="background:var(--bg-surface3);border:1px solid var(--border);">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:#1A2A1A;">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#4CAF50" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Instant SMS confirmation — no phone tag</p>
+            </div>
+            <div class="flex items-center gap-4 px-4 py-3.5 rounded-xl" style="background:var(--bg-surface3);border:1px solid var(--border);">
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style="background:#1A2A1A;">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#4CAF50" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+              </div>
+              <p class="font-body text-sm font-300" style="color:var(--text-secondary);">Free to cancel or reschedule 24 hrs ahead</p>
+            </div>
+          </div>
+          <p class="font-body text-xs mt-6 font-300" style="color:var(--text-muted);">Powered by Fresha — free for clients, no card required to book.</p>
+        </div>
+
+        <!-- Right: Fresha embed placeholder -->
+        <div class="lg:col-span-3 reveal">
+          <!-- ⚡ INTEGRATION NOTE:
+               Replace the block below with your Fresha widget embed code.
+               1. Go to fresha.com → Business dashboard → Widgets → Online Booking
+               2. Copy your embed snippet (an <iframe> or <script> tag)
+               3. Paste it here in place of the placeholder card.
+               Until then, the button below links directly to your Fresha booking page.
+          -->
+          <div class="rounded-3xl overflow-hidden flex flex-col" style="background:var(--bg-surface3);border:1px solid var(--border);min-height:420px;">
+            <!-- Mock calendar header -->
+            <div class="flex items-center justify-between px-4 sm:px-7 py-5" style="border-bottom:1px solid var(--border);">
+              <div>
+                <p class="font-heading font-600 text-base" style="color:var(--text-primary);">A&amp;N Style</p>
+                <p class="font-body text-xs" style="color:var(--text-muted);">Lower Richmond Road, SW London</p>
+              </div>
+              <div class="flex items-center gap-2 px-3 py-1.5 rounded-full" style="background:#1A2A1A;border:1px solid #2A4A2A;">
+                <span class="w-2 h-2 rounded-full" style="background:#4CAF50;"></span>
+                <span class="font-body text-xs font-500" style="color:#4CAF50;">Open Today</span>
+              </div>
+            </div>
+            <!-- Mock week strip -->
+            <div class="mock-week px-4 sm:px-7 py-5" style="border-bottom:1px solid var(--border);">
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Mon</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-muted);">23</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Tue</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-muted);">24</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:#C9A84C;">Wed</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-700 text-sm" style="background:#C9A84C;color:#111;">25</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Thu</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-secondary);">26</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Fri</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-secondary);">27</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Sat</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-secondary);">28</div></div>
+              <div class="text-center"><p class="font-body text-xs mb-2" style="color:var(--text-muted);">Sun</p><div class="w-full aspect-square rounded-lg flex items-center justify-center font-heading font-600 text-sm" style="background:var(--bg-surface);color:var(--text-muted);">29</div></div>
+            </div>
+            <!-- Mock time slots -->
+            <div class="px-4 sm:px-7 py-5 flex-1">
+              <p class="font-body text-xs tracking-wide uppercase mb-4" style="color:var(--text-muted);">Available times — Wednesday 25</p>
+              <div class="mock-slots mb-6">
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-muted);text-decoration:line-through;">9:00</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-secondary);">9:30</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500 cursor-pointer" style="background:#C9A84C22;color:#C9A84C;border:1px solid #C9A84C44;">10:00</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-secondary);">10:30</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-muted);text-decoration:line-through;">11:00</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-secondary);">11:30</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-secondary);">14:00</div>
+                <div class="text-center px-2 py-2 rounded-lg font-body text-xs font-500" style="background:var(--bg-surface);color:var(--text-secondary);">15:30</div>
+              </div>
+              <a href="https://www.fresha.com" target="_blank" rel="noopener noreferrer"
+                class="btn-gold w-full py-3.5 rounded-xl font-heading font-600 text-sm tracking-wide text-center block">
+                Open Live Booking on Fresha →
+              </a>
+              <p class="font-body text-xs text-center mt-3 font-300" style="color:var(--text-muted);">Connect your Fresha account to embed live availability directly on this page.</p>
+            </div>
           </div>
         </div>
 
@@ -444,60 +1267,29 @@
   <!-- ═══════════════════════════════════════════
        HOURS
   ════════════════════════════════════════════ -->
-  <section id="hours" class="bg-charcoal py-24 sm:py-32">
+  <section id="hours" style="background:var(--bg-surface2);" class="py-24 sm:py-32">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
-        <!-- Left: heading -->
         <div class="reveal">
-          <span class="block w-10 h-0.5 bg-gold mb-5"></span>
-          <p class="font-body text-gold text-xs tracking-[0.2em] uppercase font-500 mb-3">We're Here For You</p>
-          <h2 class="font-heading font-700 text-3xl sm:text-4xl text-white mb-6" style="letter-spacing: -0.01em;">Opening Hours</h2>
-          <p class="font-body text-gray-400 text-base font-300 leading-relaxed max-w-sm">
+          <span class="gold-line-left"></span>
+          <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">We're Here For You</p>
+          <h2 class="font-heading font-700 text-3xl sm:text-4xl mb-6" style="letter-spacing:-0.01em;color:var(--text-primary);">Opening Hours</h2>
+          <p class="font-body text-base font-300 leading-relaxed max-w-sm" style="color:var(--text-secondary);">
             Walk-ins are welcome — but booking ahead guarantees your preferred time slot and stylist.
           </p>
-          <a href="#booking" class="inline-block mt-8 btn-outline px-7 py-3 rounded-full font-heading font-600 text-sm tracking-wide border-gold text-gold hover:bg-gold hover:text-charcoal transition-all">Book a Slot</a>
+          <a href="#booking" class="inline-block mt-8 btn-outline px-7 py-3 rounded-full font-heading font-600 text-sm tracking-wide">Book a Slot</a>
         </div>
 
-        <!-- Right: hours table -->
         <div class="reveal">
-          <div class="bg-white/5 border border-white/10 rounded-3xl overflow-hidden">
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Monday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 7:30 PM</span>
-            </div>
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Tuesday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 7:30 PM</span>
-            </div>
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Wednesday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 7:30 PM</span>
-            </div>
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Thursday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 7:30 PM</span>
-            </div>
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Friday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 7:30 PM</span>
-            </div>
-
-            <div class="hours-row flex justify-between items-center px-8 py-5 border-b border-white/10">
-              <span class="font-body text-gray-300 text-sm font-400">Saturday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 6:00 PM</span>
-            </div>
-
-            <div class="flex justify-between items-center px-8 py-5">
-              <span class="font-body text-gray-300 text-sm font-400">Sunday</span>
-              <span class="font-heading font-600 text-white text-sm">9:00 AM – 5:00 PM</span>
-            </div>
-
+          <div class="rounded-3xl overflow-hidden" style="background:var(--bg-surface3);border:1px solid var(--border);">
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Monday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span></div>
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Tuesday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span></div>
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Wednesday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span></div>
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Thursday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span></div>
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Friday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span></div>
+            <div class="hours-row flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Saturday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 6:00 PM</span></div>
+            <div class="flex justify-between items-center px-8 py-5"><span class="font-body text-sm" style="color:var(--text-secondary);">Sunday</span><span class="font-heading font-600 text-sm" style="color:var(--text-primary);">9:00 AM – 5:00 PM</span></div>
           </div>
         </div>
 
@@ -507,65 +1299,84 @@
 
 
   <!-- ═══════════════════════════════════════════
-       BOOKING FORM
+       BOOKING
   ════════════════════════════════════════════ -->
-  <section id="booking" class="bg-off-white py-24 sm:py-32">
+  <section id="booking" style="background:var(--bg-surface);" class="py-24 sm:py-32">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12">
       <div class="grid grid-cols-1 lg:grid-cols-5 gap-16 items-start">
 
-        <!-- Left: heading -->
         <div class="lg:col-span-2 reveal">
-          <span class="block w-10 h-0.5 bg-gold mb-5"></span>
-          <p class="font-body text-gold text-xs tracking-[0.2em] uppercase font-500 mb-3">Reserve Your Visit</p>
-          <h2 class="font-heading font-700 text-3xl sm:text-4xl text-charcoal mb-5" style="letter-spacing: -0.01em;">Book Your Appointment</h2>
-          <p class="font-body text-charcoal-soft text-base font-300 leading-relaxed">
-            Fill in your details and we'll confirm your slot. If you have specific requests or questions, just include a note — we'll be in touch.
+          <span class="gold-line-left"></span>
+          <p class="font-body text-xs tracking-[0.2em] uppercase font-500 mb-3" style="color:#C9A84C;">Reserve Your Visit</p>
+          <h2 class="font-heading font-700 text-3xl sm:text-4xl mb-5" style="letter-spacing:-0.01em;color:var(--text-primary);">Book Your Appointment</h2>
+          <p class="font-body text-base font-300 leading-relaxed" style="color:var(--text-secondary);">
+            Fill in your details and we'll confirm your slot. If you have specific requests, include a note — we'll be in touch.
           </p>
-
           <div class="mt-10 flex flex-col gap-5">
             <div class="flex items-start gap-4">
-              <div class="w-8 h-8 rounded-full bg-gold-pale flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:var(--bg-surface3);">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
               </div>
-              <p class="font-body text-charcoal-soft text-sm font-300 leading-relaxed">Choose your preferred stylist or let us match you.</p>
+              <p class="font-body text-sm font-300 leading-relaxed" style="color:var(--text-secondary);">Choose your preferred stylist or let us match you.</p>
             </div>
             <div class="flex items-start gap-4">
-              <div class="w-8 h-8 rounded-full bg-gold-pale flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:var(--bg-surface3);">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
               </div>
-              <p class="font-body text-charcoal-soft text-sm font-300 leading-relaxed">We'll confirm your booking within the hour.</p>
+              <p class="font-body text-sm font-300 leading-relaxed" style="color:var(--text-secondary);">We'll confirm your booking within the hour.</p>
             </div>
             <div class="flex items-start gap-4">
-              <div class="w-8 h-8 rounded-full bg-gold-pale flex items-center justify-center flex-shrink-0 mt-0.5">
-                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path d="M5 13l4 4L19 7"/></svg>
+              <div class="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5" style="background:var(--bg-surface3);">
+                <svg width="14" height="14" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
               </div>
-              <p class="font-body text-charcoal-soft text-sm font-300 leading-relaxed">Easy rescheduling — just call us 24 hours ahead.</p>
+              <p class="font-body text-sm font-300 leading-relaxed" style="color:var(--text-secondary);">Easy rescheduling — just call us 24 hours ahead.</p>
             </div>
           </div>
         </div>
 
-        <!-- Right: form -->
         <div class="lg:col-span-3 reveal">
-          <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 sm:p-10">
+          <div class="rounded-3xl p-8 sm:p-10" style="background:var(--bg-surface3);border:1px solid var(--border);">
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <!-- Formspree success message -->
+            <div data-fs-success class="hidden">
+              <div class="flex flex-col items-center text-center py-10 gap-4">
+                <div class="w-14 h-14 rounded-full flex items-center justify-center" style="background:#1E2E1A;">
+                  <svg width="26" height="26" fill="none" viewBox="0 0 24 24" stroke="#4CAF50" stroke-width="2.5"><path d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <h3 class="font-heading font-700 text-xl" style="color:var(--text-primary);">Request Received!</h3>
+                <p class="font-body text-sm font-300 max-w-xs" style="color:var(--text-secondary);">Thanks for booking with A&amp;N Style. We'll call to confirm your appointment shortly.</p>
+              </div>
+            </div>
+
+            <!-- Formspree form-level error banner -->
+            <div data-fs-error class="hidden mb-5 px-4 py-3 rounded-xl font-body text-sm" style="background:#2E1A1A;color:#F87171;border:1px solid #7F1D1D;">
+              Something went wrong. Please try again or call us directly.
+            </div>
+
+            <!-- The real form -->
+            <form id="booking-form" class="grid grid-cols-1 sm:grid-cols-2 gap-5" novalidate>
 
               <!-- Full Name -->
               <div class="sm:col-span-2">
-                <label class="font-body text-xs font-500 text-charcoal-soft tracking-wide uppercase block mb-2">Full Name</label>
-                <input id="f-name" type="text" placeholder="e.g. James Reynolds" class="form-input w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm text-charcoal placeholder-gray-300 bg-white" />
+                <label for="f-name" class="font-body text-xs font-500 tracking-wide uppercase block mb-2" style="color:var(--text-muted);">Full Name</label>
+                <input id="f-name" name="name" type="text" required placeholder="e.g. James Reynolds"
+                  class="form-input w-full rounded-xl px-4 py-3 font-body text-sm" data-fs-field />
+                <span data-fs-error="name" class="font-body text-xs mt-1 block" style="color:#F87171;"></span>
               </div>
 
               <!-- Phone -->
               <div class="sm:col-span-2">
-                <label class="font-body text-xs font-500 text-charcoal-soft tracking-wide uppercase block mb-2">Phone Number</label>
-                <input id="f-phone" type="tel" placeholder="e.g. 07700 900 123" class="form-input w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm text-charcoal placeholder-gray-300 bg-white" />
+                <label for="f-phone" class="font-body text-xs font-500 tracking-wide uppercase block mb-2" style="color:var(--text-muted);">Phone Number</label>
+                <input id="f-phone" name="phone" type="tel" required placeholder="e.g. 07700 900 123"
+                  class="form-input w-full rounded-xl px-4 py-3 font-body text-sm" data-fs-field />
+                <span data-fs-error="phone" class="font-body text-xs mt-1 block" style="color:#F87171;"></span>
               </div>
 
               <!-- Service -->
               <div>
-                <label class="font-body text-xs font-500 text-charcoal-soft tracking-wide uppercase block mb-2">Service</label>
-                <select id="f-service" class="form-input w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm text-charcoal bg-white appearance-none">
+                <label for="f-service" class="font-body text-xs font-500 tracking-wide uppercase block mb-2" style="color:var(--text-muted);">Service</label>
+                <select id="f-service" name="service" required
+                  class="form-input w-full rounded-xl px-4 py-3 font-body text-sm appearance-none" data-fs-field>
                   <option value="" disabled selected>Select a service</option>
                   <optgroup label="Gents & Barbering">
                     <option>Gents Hair — £28</option>
@@ -594,35 +1405,41 @@
                     <option>Girl's Cut — £22</option>
                   </optgroup>
                 </select>
+                <span data-fs-error="service" class="font-body text-xs mt-1 block" style="color:#F87171;"></span>
               </div>
 
               <!-- Stylist -->
               <div>
-                <label class="font-body text-xs font-500 text-charcoal-soft tracking-wide uppercase block mb-2">Stylist</label>
-                <select id="f-stylist" class="form-input w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm text-charcoal bg-white appearance-none">
+                <label for="f-stylist" class="font-body text-xs font-500 tracking-wide uppercase block mb-2" style="color:var(--text-muted);">Stylist</label>
+                <select id="f-stylist" name="stylist" required
+                  class="form-input w-full rounded-xl px-4 py-3 font-body text-sm appearance-none" data-fs-field>
                   <option value="" disabled selected>Choose a stylist</option>
-                  <option>Nabi — Master Barber & Stylist</option>
+                  <option>Nabi — Master Barber &amp; Stylist</option>
                   <option>Alex — Senior Hairdresser</option>
                   <option>Sam — Colour Specialist</option>
                   <option>No preference — surprise me</option>
                 </select>
+                <span data-fs-error="stylist" class="font-body text-xs mt-1 block" style="color:#F87171;"></span>
               </div>
 
               <!-- Date/Time -->
               <div class="sm:col-span-2">
-                <label class="font-body text-xs font-500 text-charcoal-soft tracking-wide uppercase block mb-2">Preferred Date &amp; Time</label>
-                <input id="f-datetime" type="datetime-local" class="form-input w-full border border-gray-200 rounded-xl px-4 py-3 font-body text-sm text-charcoal bg-white" />
+                <label for="f-datetime" class="font-body text-xs font-500 tracking-wide uppercase block mb-2" style="color:var(--text-muted);">Preferred Date &amp; Time</label>
+                <input id="f-datetime" name="preferred_datetime" type="datetime-local" required
+                  class="form-input w-full rounded-xl px-4 py-3 font-body text-sm" data-fs-field />
+                <span data-fs-error="preferred_datetime" class="font-body text-xs mt-1 block" style="color:#F87171;"></span>
               </div>
 
               <!-- Submit -->
               <div class="sm:col-span-2 mt-2">
-                <button onclick="submitBooking()" class="btn-gold w-full py-4 rounded-xl font-heading font-600 text-sm tracking-wide">
+                <button type="submit" data-fs-submit-btn
+                  class="btn-gold w-full py-4 rounded-xl font-heading font-600 text-sm tracking-wide disabled:opacity-50 disabled:cursor-not-allowed">
                   Request Appointment
                 </button>
-                <p class="font-body text-xs text-gray-400 text-center mt-3 font-300">We'll call to confirm. No payment required upfront.</p>
+                <p class="font-body text-xs text-center mt-3 font-300" style="color:var(--text-muted);">We'll call to confirm. No payment required upfront.</p>
               </div>
 
-            </div>
+            </form>
           </div>
         </div>
 
@@ -632,63 +1449,55 @@
 
 
   <!-- ═══════════════════════════════════════════
-       CONTACT / FOOTER
+       FOOTER / CONTACT
   ════════════════════════════════════════════ -->
-  <footer id="contact" class="bg-white border-t border-gray-100">
-
-    <!-- Main footer body -->
+  <footer id="contact" style="background:var(--bg-base);border-top:1px solid var(--border);">
     <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 py-20 sm:py-24">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
 
-        <!-- Left: info -->
         <div class="reveal">
-          <a href="#" class="font-heading font-700 text-xl tracking-widest text-charcoal block mb-6">
-            A<span class="text-gold">&amp;</span>N&nbsp;<span class="font-300">STYLE</span>
+          <a href="#" class="font-heading font-700 text-xl tracking-widest block mb-6" style="color:var(--text-primary);">
+            A<span class="gold-glow">&amp;</span>N&nbsp;<span class="font-300" style="color:var(--text-secondary);">STYLE</span>
           </a>
-          <p class="font-body text-charcoal-soft text-sm font-300 leading-relaxed max-w-sm mb-8">
+          <p class="font-body text-sm font-300 leading-relaxed max-w-sm mb-8" style="color:var(--text-secondary);">
             A premium salon and barbering studio built around quiet craft, clean spaces, and results that speak for themselves.
           </p>
-
           <div class="flex flex-col gap-4 mb-8">
             <div class="flex items-start gap-3">
               <svg class="mt-0.5 flex-shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
-              <a href="https://google.com" target="_blank" rel="noopener noreferrer" class="font-body text-sm text-charcoal-soft font-300 hover:text-gold transition-colors">
-                View us on Google Maps →
-              </a>
+              <a href="https://maps.app.goo.gl/q8zmYjgaR36RgRXp7" target="_blank" rel="noopener noreferrer" class="font-body text-sm font-300 hover:text-gold transition-colors" style="color:var(--text-secondary);">View us on Google Maps →</a>
             </div>
             <div class="flex items-center gap-3">
               <svg class="flex-shrink-0" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="#C9A84C" stroke-width="2"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              <span class="font-body text-sm text-charcoal-soft font-300">Available during opening hours</span>
+              <a href="tel:+442088745322" class="font-body text-sm font-300 transition-colors" style="color:var(--text-secondary);" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='var(--text-secondary)'">+44 20 8874 5322</a>
+            </div>
+            <div class="flex items-center gap-3">
+              <svg class="flex-shrink-0" width="16" height="16" viewBox="0 0 24 24" fill="#C9A84C"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.556 4.123 1.528 5.856L.057 23.885a.5.5 0 00.611.61l6.044-1.47A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a10 10 0 01-5.123-1.408l-.366-.214-3.793.922.943-3.694-.237-.381A10 10 0 1112 22z"/></svg>
+              <a href="https://wa.me/447836445764" target="_blank" rel="noopener noreferrer" class="font-body text-sm font-300 transition-colors" style="color:var(--text-secondary);" onmouseover="this.style.color='#C9A84C'" onmouseout="this.style.color='var(--text-secondary)'">Message us on WhatsApp</a>
             </div>
           </div>
-
-          <!-- Hours compact -->
-          <div class="border border-gray-100 rounded-2xl overflow-hidden">
-            <div class="flex justify-between px-5 py-3 border-b border-gray-50 bg-off-white">
-              <span class="font-body text-xs text-charcoal-soft">Mon – Fri</span>
-              <span class="font-heading font-600 text-xs text-charcoal">9:00 AM – 7:30 PM</span>
+          <div class="rounded-2xl overflow-hidden" style="border:1px solid var(--border);">
+            <div class="flex justify-between px-5 py-3" style="background:var(--compact-hours-bg);border-bottom:1px solid var(--compact-hours-border);">
+              <span class="font-body text-xs" style="color:var(--text-secondary);">Mon – Fri</span>
+              <span class="font-heading font-600 text-xs" style="color:var(--text-primary);">9:00 AM – 7:30 PM</span>
             </div>
-            <div class="flex justify-between px-5 py-3 border-b border-gray-50">
-              <span class="font-body text-xs text-charcoal-soft">Saturday</span>
-              <span class="font-heading font-600 text-xs text-charcoal">9:00 AM – 6:00 PM</span>
+            <div class="flex justify-between px-5 py-3" style="border-bottom:1px solid var(--compact-hours-border);">
+              <span class="font-body text-xs" style="color:var(--text-secondary);">Saturday</span>
+              <span class="font-heading font-600 text-xs" style="color:var(--text-primary);">9:00 AM – 6:00 PM</span>
             </div>
             <div class="flex justify-between px-5 py-3">
-              <span class="font-body text-xs text-charcoal-soft">Sunday</span>
-              <span class="font-heading font-600 text-xs text-charcoal">9:00 AM – 5:00 PM</span>
+              <span class="font-body text-xs" style="color:var(--text-secondary);">Sunday</span>
+              <span class="font-heading font-600 text-xs" style="color:var(--text-primary);">9:00 AM – 5:00 PM</span>
             </div>
           </div>
         </div>
 
-        <!-- Right: map -->
         <div class="reveal">
-          <div class="map-placeholder rounded-3xl overflow-hidden h-80 sm:h-96 lg:h-full min-h-64 relative">
+          <div class="map-placeholder footer-map rounded-3xl overflow-hidden" style="height:380px;">
             <iframe
-              src="https://maps.google.com/maps?q=London+salon&output=embed&z=14"
-              width="100%"
-              height="100%"
-              style="border:0; min-height: 320px;"
-              allowfullscreen=""
-              loading="lazy"
+              src="https://www.google.com/maps/embed?pb=!3m2!1sen!2sus!4v1782436818314!5m2!1sen!2sus!6m8!1m7!1sdZAzpww9l2tz0yjrWPciuQ!2m2!1d51.46616004051309!2d-0.2145763774997557!3f242.24059393865608!4f1.6240993276317113!5f0.7820865974627469"            width="100%" height="100%"
+              style="border:0;display:block;"
+              allowfullscreen="" loading="lazy"
               referrerpolicy="no-referrer-when-downgrade"
               title="A&N Style Location"
             ></iframe>
@@ -698,26 +1507,58 @@
       </div>
     </div>
 
-    <!-- Bottom bar -->
-    <div class="border-t border-gray-100 py-6">
+    <div style="border-top:1px solid var(--footer-bar-border);" class="py-6">
       <div class="max-w-7xl mx-auto px-5 sm:px-8 lg:px-12 flex flex-col sm:flex-row justify-between items-center gap-3">
-        <p class="font-body text-xs text-gray-400 font-300">&copy; 2025 A&amp;N Style. All rights reserved.</p>
-        <p class="font-body text-xs text-gray-400 font-300">Crafted with care.</p>
+        <p class="font-body text-xs font-300" style="color:var(--text-muted);">&copy; 2025 A&amp;N Style. All rights reserved.</p>
+        <p class="font-body text-xs font-300" style="color:var(--text-muted);">Crafted with care.</p>
       </div>
     </div>
-
   </footer>
+
+
+  <!-- ═══════════════════════════════════════════
+       WHATSAPP FLOATING BUTTON
+  ════════════════════════════════════════════ -->
+  <a id="whatsapp-fab" href="https://wa.me/447836445764?text=Hi%20A%26N%20Style%2C%20I%27d%20like%20to%20book%20an%20appointment." target="_blank" rel="noopener noreferrer" aria-label="Chat with us on WhatsApp">
+    <span class="wa-pulse"></span>
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="white">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      <path d="M12 0C5.373 0 0 5.373 0 12c0 2.126.556 4.123 1.528 5.856L.057 23.885a.5.5 0 00.611.61l6.044-1.47A11.952 11.952 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22a10 10 0 01-5.123-1.408l-.366-.214-3.793.922.943-3.694-.237-.381A10 10 0 1112 22z"/>
+    </svg>
+  </a>
 
 
   <!-- ═══════════════════════════════════════════
        JAVASCRIPT
   ════════════════════════════════════════════ -->
   <script>
-    // ── Sticky nav shadow ──
+    // ── Theme toggle ──
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isDark = html.getAttribute('data-theme') === 'dark';
+      html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+      // sync mobile knob position
+      const knob = document.getElementById('mob-knob');
+      if (knob) knob.style.transform = isDark ? 'translateX(15px)' : '';
+      // update datetime color-scheme
+      document.getElementById('f-datetime').style.colorScheme = isDark ? 'light' : 'dark';
+      localStorage.setItem('an-theme', isDark ? 'light' : 'dark');
+    }
+
+    // Restore saved theme
+    (function() {
+      const saved = localStorage.getItem('an-theme');
+      if (saved && saved !== 'dark') {
+        document.documentElement.setAttribute('data-theme', 'light');
+        const knob = document.getElementById('mob-knob');
+        if (knob) knob.style.transform = 'translateX(15px)';
+      }
+    })();
+
+    // ── Sticky nav ──
     const navbar = document.getElementById('navbar');
     window.addEventListener('scroll', () => {
-      if (window.scrollY > 10) navbar.classList.add('scrolled');
-      else navbar.classList.remove('scrolled');
+      navbar.classList.toggle('scrolled', window.scrollY > 10);
     });
 
     // ── Hamburger ──
@@ -731,83 +1572,83 @@
     hamburger.addEventListener('click', () => {
       menuOpen = !menuOpen;
       if (menuOpen) {
-        mobileMenu.classList.remove('hidden');
-        mobileMenu.classList.add('open');
+        mobileMenu.classList.remove('hidden'); mobileMenu.classList.add('open');
         hb1.style.transform = 'translateY(6px) rotate(45deg)';
         hb2.style.opacity = '0';
         hb3.style.transform = 'translateY(-6px) rotate(-45deg)';
         hb3.style.width = '24px';
       } else {
-        mobileMenu.classList.remove('open');
-        mobileMenu.classList.add('hidden');
-        hb1.style.transform = '';
-        hb2.style.opacity = '1';
-        hb3.style.transform = '';
-        hb3.style.width = '16px';
+        mobileMenu.classList.remove('open'); mobileMenu.classList.add('hidden');
+        hb1.style.transform = ''; hb2.style.opacity = '1';
+        hb3.style.transform = ''; hb3.style.width = '16px';
       }
     });
-
-    // Close menu on link click
     document.querySelectorAll('.mobile-nav-link').forEach(link => {
       link.addEventListener('click', () => {
         menuOpen = false;
-        mobileMenu.classList.remove('open');
-        mobileMenu.classList.add('hidden');
-        hb1.style.transform = '';
-        hb2.style.opacity = '1';
-        hb3.style.transform = '';
-        hb3.style.width = '16px';
+        mobileMenu.classList.remove('open'); mobileMenu.classList.add('hidden');
+        hb1.style.transform = ''; hb2.style.opacity = '1';
+        hb3.style.transform = ''; hb3.style.width = '16px';
       });
     });
 
-    // ── Booking submit ──
-    function submitBooking() {
-      const name = document.getElementById('f-name').value.trim();
-      const phone = document.getElementById('f-phone').value.trim();
-      const service = document.getElementById('f-service').value;
-      const stylist = document.getElementById('f-stylist').value;
-      const datetime = document.getElementById('f-datetime').value;
+    // ── Gallery lightbox ──
+    const galleryImages = [
+      { src: 'https://images.unsplash.com/photo-1599351431613-18ef1fdd27e1?w=1200&q=90', caption: 'Skin Fade' },
+      { src: 'https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=1200&q=90', caption: 'Gents Cut' },
+      { src: 'https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1200&q=90', caption: 'Beard Shape Up' },
+      { src: 'https://images.unsplash.com/photo-1634302086687-27b5f93e72b9?w=1200&q=90', caption: 'Ladies Styling' },
+      { src: 'https://images.unsplash.com/photo-1652259805416-dfbf1f52c9b3?w=1200&q=90', caption: 'Hot Towel Shave' },
+      { src: 'https://images.unsplash.com/photo-1560869713-7d0a29430803?w=1200&q=90', caption: 'Colour Highlights' },
+      { src: 'https://images.unsplash.com/photo-1593702288056-f4d9c251d969?w=1200&q=90', caption: 'Clipper Cut' },
+      { src: 'https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=1200&q=90', caption: 'Wash, Cut & Blow Dry' },
+      { src: 'https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=1200&q=90', caption: "Kids' Cut" },
+    ];
+    let currentIdx = 0;
 
-      if (!name || !phone || !service || !stylist || !datetime) {
-        alert('Please fill in all fields before requesting your appointment.');
-        return;
-      }
-
-      const date = new Date(datetime);
-      const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };
-      const formatted = date.toLocaleDateString('en-GB', options);
-
-      alert(
-        `✅ Booking Request Received!\n\n` +
-        `Name: ${name}\n` +
-        `Phone: ${phone}\n` +
-        `Service: ${service}\n` +
-        `Stylist: ${stylist}\n` +
-        `Requested Time: ${formatted}\n\n` +
-        `We'll call to confirm your appointment shortly. Thank you for choosing A&N Style!`
-      );
-
-      // Reset
-      document.getElementById('f-name').value = '';
-      document.getElementById('f-phone').value = '';
-      document.getElementById('f-service').selectedIndex = 0;
-      document.getElementById('f-stylist').selectedIndex = 0;
-      document.getElementById('f-datetime').value = '';
+    function openLightbox(idx) {
+      currentIdx = idx;
+      const lb = document.getElementById('lightbox');
+      const img = document.getElementById('lightbox-img');
+      const cap = document.getElementById('lightbox-caption');
+      img.src = galleryImages[idx].src;
+      cap.textContent = galleryImages[idx].caption + '  ·  ' + (idx + 1) + ' / ' + galleryImages.length;
+      lb.classList.add('active');
+      document.body.style.overflow = 'hidden';
     }
+    function closeLightbox() {
+      document.getElementById('lightbox').classList.remove('active');
+      document.body.style.overflow = '';
+    }
+    function closeLightboxOnBg(e) {
+      if (e.target === document.getElementById('lightbox')) closeLightbox();
+    }
+    function lightboxNav(dir) {
+      currentIdx = (currentIdx + dir + galleryImages.length) % galleryImages.length;
+      const img = document.getElementById('lightbox-img');
+      const cap = document.getElementById('lightbox-caption');
+      img.src = galleryImages[currentIdx].src;
+      cap.textContent = galleryImages[currentIdx].caption + '  ·  ' + (currentIdx + 1) + ' / ' + galleryImages.length;
+    }
+    document.addEventListener('keydown', e => {
+      const lb = document.getElementById('lightbox');
+      if (!lb.classList.contains('active')) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowLeft') lightboxNav(-1);
+      if (e.key === 'ArrowRight') lightboxNav(1);
+    });
+
+    // ── Formspree Ajax ──
+    window.formspree = window.formspree || function () { (formspree.q = formspree.q || []).push(arguments); };
+    formspree('initForm', { formElement: '#booking-form', formId: 'mgojaorz' });
 
     // ── Scroll reveal ──
-    const revealEls = document.querySelectorAll('.reveal');
     const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('visible');
-          observer.unobserve(entry.target);
-        }
-      });
+      entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); observer.unobserve(e.target); } });
     }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
-
-    revealEls.forEach(el => observer.observe(el));
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
   </script>
 
+  <script src="https://unpkg.com/@formspree/ajax@1" defer></script>
 </body>
 </html>
